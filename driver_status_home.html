@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CCS Club Driver Stats</title>
+<style>
+    body {
+        margin: 5;
+        font-family: Arial, sans-serif;
+    }
+    /*task bar*/
+    .taskbar{
+        background-color: grey;
+        overflow: hidden;
+    }
+
+    .taskbar a{
+        float: left;
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+
+    }
+
+    .taskbar a.right{
+        float: right;
+    }
+
+    .taskbar    a:hover{
+        background-color: grey;
+        color: black;
+    }
+
+    .taskbar input[type=text]{
+        float: left;
+        margin-right: 16px;
+        border: none;
+        font-size: 17px;
+    }
+    /*end of taskbar*/
+
+    /*widgets*/
+
+    .widgets{
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+    }
+    .widget{
+        background: grey;
+        border-radius: 10px;
+        padding: 50px;
+        display: inline-block;
+    }
+    .widget h2{
+        margin-top: 0;
+        font: siz 1.2em;
+        color: #333;
+    }
+    /*end of widgets*/
+
+</style>
+</head>
+<h1>CCS Club Driver Stats</h1>
+<body>
+    <div id="taskbar-container"></div>
+    <div class ="widgets">
+        <div class ="widget">
+            <h2>Driver Stats</h2>
+            <p>input driver stats here</p>
+        </div>
+        <div class ="widget">
+            <h2>Weather</h2>
+            <p>input Weather here</p>
+        </div>
+    </div>
+        <script>
+            const links = [
+                {text: "Account Management", href : "account_management.html"},
+                {text: "Stats", href : "stats.html"},
+                {text: "Weather", href : "weather.html"},
+                {text: "Search", href : "#"},
+                {text: "Login", href : "driver_status_logged_in_home.html"}, /*Change this to log in page but for now this works*/
+            ];
+
+            const taskbar = document.createElement("div");
+            taskbar.className = "taskbar";
+
+            links.forEach(link=>{
+                const a = document.createElement("a");
+                a.textContent =link.text;
+                a.href = link.href;
+                if (link.text === "Search"){
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    input.placeholder = "Search";
+                    a.textContent = "";
+                    a.appendChild(input);
+                }
+
+                if(link.text === "Login"){
+                    a.className = "right";
+                }
+
+                taskbar.appendChild(a);
+            });
+
+            document.getElementById("taskbar-container").appendChild(taskbar);
+
+            
+        </script>
+</body>
+</html>
