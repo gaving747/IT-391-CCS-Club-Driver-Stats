@@ -8,6 +8,10 @@
         margin: 5;
         font-family: Arial, sans-serif;
     }
+    h1 {
+            text-align: center;
+            color: #333;
+        }
     /*task bar*/
     .taskbar{
         background-color: grey;
@@ -33,12 +37,6 @@
         color: black;
     }
 
-    .taskbar input[type=text]{
-        float: left;
-        margin-right: 16px;
-        border: none;
-        font-size: 17px;
-    }
     /*end of taskbar*/
 
     /*widgets*/
@@ -63,26 +61,27 @@
 
 </style>
 </head>
-<h1>CCS Club Driver Stats</h1>
+
 <body>
+    <h1>
+        <button onclick="window.location.href='driver_status_home.html';" style="font-size: inherit; background: none; border: none; color: inherit; cursor: pointer;">
+    
+
+            CCS Club Driver Stats
+        </button>
+    </h1>
     <div id="taskbar-container"></div>
     <div class ="widgets">
         <div class ="widget">
             <h2>Driver Stats</h2>
             <p>input driver stats here</p>
         </div>
-        <div class ="widget">
-            <h2>Weather</h2>
-            <p>input Weather here</p>
-        </div>
     </div>
         <script>
             const links = [
-                {text: "Account Management", href : "account_management.html"},
+                {text: "Race Schedule", href : "schedule_race.html"},
                 {text: "Stats", href : "stats.html"},
-                {text: "Weather", href : "weather.html"},
-                {text: "Search", href : "#"},
-                {text: "Login", href : "login.html"}, /*Change this to log in page but for now this works*/
+                {text: "Login", href : "login.html"},
             ];
 
             const taskbar = document.createElement("div");
@@ -92,13 +91,7 @@
                 const a = document.createElement("a");
                 a.textContent =link.text;
                 a.href = link.href;
-                if (link.text === "Search"){
-                    const input = document.createElement("input");
-                    input.type = "text";
-                    input.placeholder = "Search";
-                    a.textContent = "";
-                    a.appendChild(input);
-                }
+                
 
                 if(link.text === "Login"){
                     a.className = "right";

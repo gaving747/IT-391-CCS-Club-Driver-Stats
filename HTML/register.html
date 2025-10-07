@@ -79,17 +79,19 @@
 
         <h1>CCS Club Driver Stats Login</h1>
         <form id = "register" action="register" method="post">
+
             <label for="create username">Create Username:</label>
             <input type="text" id="username" name="username" required>
 
             <label for="email">Add Email:</label>
-            <input type="username" id="email" name="email" required>
+            <input type="email" id="email" name="email" required>
             
             <label for="create password">Create Password:</label>
             <input type="password" id="password" name="password" required>
 
             <label for="retype_password">Create Password:</label>
             <input type="password" id="retype_password" name="retype_password" required>
+
             <p class="error" id="errormsg">passwords do not match</p>
             
             <input type="submit" value="Login">
@@ -100,10 +102,17 @@
     <script>
         document.getElementById("register").addEventListener("submit", function(event)
         {
+            const username = document.getElementById('username').value;
+            if (username.length < 3) {
+                alert('Username must be at least 3 characters long.');
+                event.preventDefault();
+            }
+            
             const password = document.getElementById("password").value;
             const retype_password = document.getElementById("retype_password").value;
             const errorMsg = document.getElementById("errormsg");   
 
+            
             if(password !== retype_password)
             {
                 event.preventDefault(); 
