@@ -2,12 +2,12 @@
 
 This Node.js project provides an API endpoint to access autocross race data stored in an Excel file.
 
-## 🚀 Features
+## 
 - Reads Excel data using the `xlsx` package
 - Serves data as JSON at `/api/results`
 - Cross-origin enabled for use with your dashboard frontend
 
-## ⚙️ Setup Instructions
+##  Setup Instructions
 1. Clone this repository:
    ```bash
    git clone https://github.com/your-username/ccscc-race-api.git
@@ -34,7 +34,7 @@ This Node.js project provides an API endpoint to access autocross race data stor
    http://localhost:3000/api/results
    ```
 
-## 📦 Example JSON Output
+##  Example JSON Output
 ```json
 [
   {
