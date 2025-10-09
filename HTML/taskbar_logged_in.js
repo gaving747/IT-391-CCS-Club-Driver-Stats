@@ -2,9 +2,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const links = [
         {text: "Home", href : "driver_status_logged_in_home.html"},
-        {text: "Race Schedule", href : "schedule_race_logged_in.html"},
-        {text: "Garage", href : "garage.html"},
-        {text: "Stats", href : "stats_logged_in.html"},
+        {text: "Event Schedule", href : "schedule_race_logged_in.html"},
+        {text: "Stats", href : "logged_in_stats.html"},
         {text: "Personal Stats", href : "personal_stats.html"},
         {text: "Weather", href : "weather.html"},
     ];
@@ -36,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const profileLink = document.createElement("a");
     profileLink.textContent = "View Profile";
-    profileLink.href = "driver_status_home.html";//change this
+    profileLink.href = "profile.html";//change this
 
     const garageLink = document.createElement("a");
     garageLink.textContent = "Garage";
