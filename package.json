@@ -1,7 +1,7 @@
 {
   "name": "ccscc-race-api",
   "version": "1.0.0",
-  "description": "API to serve Champaign County Sports Car Club race data from Excel",
+  "description": "API to serve CCS Club Driver Stats from Excel",
   "main": "server.js",
   "type": "module",
   "scripts": {
