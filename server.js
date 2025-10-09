@@ -27,5 +27,5 @@ app.get("/api/results", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Server running at http://localhost:${PORT}/api/results`);
+  console.log(`Server running at http://localhost:${PORT}/api/results`);
 });
