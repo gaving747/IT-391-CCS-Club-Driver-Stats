@@ -68,7 +68,7 @@
 <body>
     <div class="container">
 
-        <a href="driver_status_home.html" class="back-arrow">&#8592; </a>
+       <a href="{{ url_for('home') }}" class="back-arrow">&#8592; </a>
 
         <h1>CCS Club Driver Stats Login</h1>
         <form action="/login" method="post">
@@ -81,7 +81,7 @@
             <input type="submit" value="Login">
         </form>
 
-        <p>Don't have an account? <a href="register.html">Register here</a></p>
+        <p>Don't have an account? <a href="/register">Register here</a></p>
     </div>
 </body>
 </html>
