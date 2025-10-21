@@ -60,9 +60,20 @@ def profile():
     }
     return render_template('profile.html', user=user)
 
+'''
 @app.route('/garage')
 def garage():
+    cursor = db.cursor(dictionary=True)
+    user_driver_name = session.get('drivername')  # consistent key
+     # fetch cars for logged-in user
+    cursor.execute(
+        "SELECT * FROM Car WHERE car_driver_name = %s ORDER BY car_ID DESC",
+        (user_driver_name,)
+    )
+    cars = cursor.fetchall()
+
     return render_template('garage.html')
+'''
 
 @app.route('/logout')
 def logout():
@@ -145,6 +156,38 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html')
+
+
+@app.route('/garage', methods=['GET', 'POST'])
+def garage():
+    cursor = db.cursor(dictionary=True)
+    user_driver_name = session.get('drivername')
+
+    if request.method == 'POST':
+        car_year = request.form['car_year']
+        car_make = request.form['car_make']
+        car_model = request.form['car_model']
+        wheelbase = request.form.get('wheelbase', None)
+        mods = request.form.get('mods', None)
+        tire_description = request.form.get('tire_description', None)
+        weight = request.form.get('weight', None)
+
+        cursor.callproc('add_car', (
+            user_driver_name, car_year, car_make, car_model,
+            wheelbase, mods, tire_description, weight
+        ))
+        db.commit()
+        flash("Car successfully added!", "success")
+
+    # Fetch cars for logged-in user
+    cursor.execute(
+        "SELECT * FROM Car WHERE car_driver_name = %s ORDER BY car_ID DESC",
+        (user_driver_name,)
+    )
+    cars = cursor.fetchall()
+
+    return render_template('garage.html', cars=cars)
+
 
 
 # -------------------------
