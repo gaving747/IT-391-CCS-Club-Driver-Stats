@@ -18,6 +18,9 @@ import mysql.connector
 from mysql.connector import Error
 from typing import Dict, Any, List, Optional, cast
 from datetime import date
+import logging
+
+logger = logging.getLogger(__name__)
 
 from classes.Repository import (
     IAccountRepo,
@@ -52,6 +55,7 @@ class MySQLAccountRepo(IAccountRepo):
         with self._conn.get_conn() as c:
             cur = c.cursor()
             cur.execute(q, (act_username, act_drivername, act_email, act_password))
+            logger.debug(cur.statement)
             c.commit()
             return int(cur.lastrowid or 0)
 
@@ -97,6 +101,7 @@ class MySQLEventChairRepo(IEventChairRepo):
         with self._conn.get_conn() as c:
             cur = c.cursor()
             cur.execute(q, (event_id, chair_name))
+            logger.debug(cur.statement)
             c.commit()
             return int(cur.lastrowid or 0)
 
@@ -217,6 +222,26 @@ class MySQLEventRepo(IEventRepo):
             cur = c.cursor(dictionary=True)
             cur.execute(q)
             return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_events_by_location(self, location_id: int) -> List[Dict[str, Any]]:
+        """Returns all events at a specific location"""
+        q = "SELECT * FROM Event WHERE location_id = %s"
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, (location_id,))
+            return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_events_with_location_details(self) -> List[Dict[str, Any]]:
+        """Returns events with their location information joined"""
+        q = """
+            SELECT e.*, l.lat, l.lon, l.surface_type, l.course_map_url
+            FROM Event e
+            LEFT JOIN Location l ON e.location_id = l.location_id
+        """
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q)
+            return cast(List[Dict[str, Any]], cur.fetchall())
 
 
 class MySQLEventSessionRepo(IEventSessionRepo):
@@ -319,7 +344,7 @@ class MySQLCarRepo(ICarRepo):
     def __init__(self, conn: MySQLConnection):
         self._conn = conn
 
-    def create_car(self, car_driver_name: str, car_year: int, car_make: str, car_model: str, wheelbase: Optional[float] = None, mods: Optional[str] = None, tire_description: Optional[str] = None, weight: Optional[int] = None) -> int:
+    def create_car(self, car_driver_name: str, car_make: str, car_model: str, car_year: Optional[int] = None, wheelbase: Optional[float] = None, mods: Optional[str] = None, tire_description: Optional[str] = None, weight: Optional[int] = None) -> int:
         q = ("INSERT INTO Car (car_driver_name, car_year, car_make, car_model, wheelbase, mods, tire_description, weight)"
              " VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
         with self._conn.get_conn() as c:
@@ -358,6 +383,33 @@ class MySQLCarRepo(ICarRepo):
         with self._conn.get_conn() as c:
             cur = c.cursor(dictionary=True)
             cur.execute(q)
+            return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_cars_by_driver(self, driver_name: str) -> List[Dict[str, Any]]:
+        """Returns all cars for a specific driver"""
+        q = "SELECT * FROM Car WHERE car_driver_name = %s"
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, (driver_name,))
+            return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_cars_by_params(self, make: str, model: Optional[str] = None, year: Optional[int] = None, driver_name: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Returns all cars matching make and optionally model"""
+        q = "SELECT * FROM Car WHERE car_make = %s"
+        params=[make]
+        if model:
+            q += " AND car_model = %s"
+            params.append(model)
+        if year:
+            q += " AND car_year = %s"
+            params.append(str(year))
+        if driver_name:
+            q += " AND car_driver_name = %s"
+            params.append(driver_name)
+        
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, params)
             return cast(List[Dict[str, Any]], cur.fetchall())
 
 
@@ -405,6 +457,41 @@ class MySQLSessionRawRepo(ISessionRawRepo):
             cur = c.cursor(dictionary=True)
             cur.execute(q, (event_session_id,))
             return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_session_raw_by_car(self, car_id: int) -> List[Dict[str, Any]]:
+        """Returns all raw sessions for a specific car"""
+        q = "SELECT * FROM Session_Raw_Data WHERE car_id = %s"
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, (car_id,))
+            return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_session_raw_by_driver(self, driver_name: str) -> List[Dict[str, Any]]:
+        """Returns all raw sessions for a specific driver"""
+        q = """
+            SELECT sr.* 
+            FROM Session_Raw_Data sr
+            JOIN Car c ON sr.car_id = c.car_id
+            WHERE c.car_driver_name = %s
+        """
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, (driver_name,))
+            return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_session_raw_with_car_details(self, session_data_id: int) -> Optional[Dict[str, Any]]:
+        """Returns session with car details joined"""
+        q = """
+            SELECT sr.*, c.car_driver_name, c.car_year, c.car_make, c.car_model, 
+                   c.wheelbase, c.mods, c.tire_description, c.weight
+            FROM Session_Raw_Data sr
+            JOIN Car c ON sr.car_id = c.car_id
+            WHERE sr.session_data_id = %s
+        """
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, (session_data_id,))
+            return cast(Optional[Dict[str, Any]], cur.fetchone())
 
 
 class MySQLSessionPAXRepo(ISessionPAXRepo):
@@ -451,18 +538,53 @@ class MySQLSessionPAXRepo(ISessionPAXRepo):
             cur = c.cursor(dictionary=True)
             cur.execute(q, (event_session_id,))
             return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_session_pax_by_car(self, car_id: int) -> List[Dict[str, Any]]:
+        """Returns all PAX sessions for a specific car"""
+        q = "SELECT * FROM Session_PAX_Data WHERE car_id = %s"
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, (car_id,))
+            return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_session_pax_by_driver(self, driver_name: str) -> List[Dict[str, Any]]:
+        """Returns all PAX sessions for a specific driver"""
+        q = """
+            SELECT sp.* 
+            FROM Session_PAX_Data sp
+            JOIN Car c ON sp.car_id = c.car_id
+            WHERE c.car_driver_name = %s
+        """
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, (driver_name,))
+            return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_session_pax_with_car_details(self, session_data_id: int) -> Optional[Dict[str, Any]]:
+        """Returns session with car details joined"""
+        q = """
+            SELECT sp.*, c.car_driver_name, c.car_year, c.car_make, c.car_model, 
+                   c.wheelbase, c.mods, c.tire_description, c.weight
+            FROM Session_PAX_Data sp
+            JOIN Car c ON sp.car_id = c.car_id
+            WHERE sp.session_data_id = %s
+        """
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, (session_data_id,))
+            return cast(Optional[Dict[str, Any]], cur.fetchone())
 
 
 class MySQLSessionFinalRepo(ISessionFinalRepo):
     def __init__(self, conn: MySQLConnection):
         self._conn = conn
 
-    def create_session_final(self, session_class_abrv: str, session_car_num: int, sf_has_trophy: bool, sf_car_color: str, car_id: int, event_session_id: int) -> int:
-        q = ("INSERT INTO Session_Final_Data (session_class_abrv, session_car_num, sf_has_trophy, sf_car_color, car_id, event_session_id)"
-             " VALUES (%s, %s, %s, %s, %s, %s)")
+    def create_session_final(self, session_class_abrv: str, session_race_class: str, session_car_num: int, sf_has_trophy: bool, sf_car_color: str, car_id: int, event_session_id: int) -> int:
+        q = ("INSERT INTO Session_Final_Data (session_class_abrv, session_race_class, session_car_num, sf_has_trophy, sf_car_color, car_id, event_session_id)"
+             " VALUES (%s, %s, %s, %s, %s, %s, %s)")
         with self._conn.get_conn() as c:
             cur = c.cursor()
-            cur.execute(q, (session_class_abrv, session_car_num, sf_has_trophy, sf_car_color, car_id, event_session_id))
+            cur.execute(q, (session_class_abrv,session_race_class, session_car_num, sf_has_trophy, sf_car_color, car_id, event_session_id))
             c.commit()
             return int(cur.lastrowid or 0)
 
@@ -497,6 +619,66 @@ class MySQLSessionFinalRepo(ISessionFinalRepo):
             cur = c.cursor(dictionary=True)
             cur.execute(q, (event_session_id,))
             return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_session_final_by_car(self, car_id: int) -> List[Dict[str, Any]]:
+        """Returns all final sessions for a specific car"""
+        q = "SELECT * FROM Session_Final_Data WHERE car_id = %s"
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, (car_id,))
+            return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_session_final_by_driver(self, driver_name: str) -> List[Dict[str, Any]]:
+        """Returns all final sessions for a specific driver"""
+        q = """
+            SELECT sf.* 
+            FROM Session_Final_Data sf
+            JOIN Car c ON sf.car_id = c.car_id
+            WHERE c.car_driver_name = %s
+        """
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, (driver_name,))
+            return cast(List[Dict[str, Any]], cur.fetchall())
+            
+    def get_session_final_with_car_details(self, session_data_id: int) -> Optional[Dict[str, Any]]:
+        """Returns session with car details joined"""
+        q = """
+            SELECT sf.*, c.car_driver_name, c.car_year, c.car_make, c.car_model, 
+                   c.wheelbase, c.mods, c.tire_description, c.weight
+            FROM Session_Final_Data sf
+            JOIN Car c ON sf.car_id = c.car_id
+            WHERE sf.session_data_id = %s
+        """
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q, (session_data_id,))
+            return cast(Optional[Dict[str, Any]], cur.fetchone())
+            
+    def get_session_final_with_runs(self, session_data_id: int) -> Optional[Dict[str, Any]]:
+        """Returns final session with all its runs"""
+        q_session = """
+            SELECT sf.* 
+            FROM Session_Final_Data sf
+            WHERE sf.session_data_id = %s
+        """
+        q_runs = """
+            SELECT r.*
+            FROM Run r
+            WHERE r.fsession_id = %s
+            ORDER BY r.run_time ASC
+        """
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            # Get session details
+            cur.execute(q_session, (session_data_id,))
+            session = cast(Optional[Dict[str, Any]], cur.fetchone())
+            if session:
+                # Get runs for this session
+                cur.execute(q_runs, (session_data_id,))
+                runs = cast(List[Dict[str, Any]], cur.fetchall())
+                session['runs'] = runs
+            return session
 
 
 class MySQLRunRepo(IRunRepo):
@@ -508,6 +690,7 @@ class MySQLRunRepo(IRunRepo):
         with self._conn.get_conn() as c:
             cur = c.cursor()
             cur.execute(q, (run_time, is_dnf, num_penalties, fsession_id))
+            logger.debug(cur.statement)
             c.commit()
             return int(cur.lastrowid or 0)
 

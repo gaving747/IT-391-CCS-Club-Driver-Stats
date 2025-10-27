@@ -113,6 +113,16 @@ class IEventRepo(ABC):
     @abstractmethod
     def get_events(self) -> List[Dict[str, Any]]:
         raise NotImplementedError()
+        
+    @abstractmethod
+    def get_events_by_location(self, location_id: int) -> List[Dict[str, Any]]:
+        """Returns all events at a specific location"""
+        raise NotImplementedError()
+        
+    @abstractmethod
+    def get_events_with_location_details(self) -> List[Dict[str, Any]]:
+        """Returns events with their location information joined"""
+        raise NotImplementedError()
 
 
 class IEventSessionRepo(ABC):
@@ -178,7 +188,7 @@ class ICarRepo(ABC):
     """
 
     @abstractmethod
-    def create_car(self, car_driver_name: str, car_year: int, car_make: str, car_model: str, wheelbase: Optional[float] = None, mods: Optional[str] = None, tire_description: Optional[str] = None, weight: Optional[int] = None) -> int:
+    def create_car(self, car_driver_name: str, car_make: str, car_model: str, car_year: Optional[int] = None, wheelbase: Optional[float] = None, mods: Optional[str] = None, tire_description: Optional[str] = None, weight: Optional[int] = None) -> int:
         raise NotImplementedError()
 
     @abstractmethod
@@ -196,7 +206,17 @@ class ICarRepo(ABC):
     @abstractmethod
     def get_cars(self) -> List[Dict[str, Any]]:
         raise NotImplementedError()
-
+        
+    @abstractmethod
+    def get_cars_by_driver(self, driver_name: str) -> List[Dict[str, Any]]:
+        """Returns all cars for a specific driver"""
+        raise NotImplementedError()
+        
+    @abstractmethod
+    def get_cars_by_params(self, make: str, model: Optional[str] = None, year: Optional[int] = None, driver_name: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Returns all cars matching make and optionally year or model"""
+        raise NotImplementedError()
+        
 
 class ISessionRawRepo(ABC):
     """Repository interface for the Session_Raw_Data table.
@@ -222,6 +242,21 @@ class ISessionRawRepo(ABC):
 
     @abstractmethod
     def get_session_raw_by_event(self, event_session_id: int) -> List[Dict[str, Any]]:
+        raise NotImplementedError()
+        
+    @abstractmethod
+    def get_session_raw_by_car(self, car_id: int) -> List[Dict[str, Any]]:
+        """Returns all raw sessions for a specific car"""
+        raise NotImplementedError()
+        
+    @abstractmethod
+    def get_session_raw_by_driver(self, driver_name: str) -> List[Dict[str, Any]]:
+        """Returns all raw sessions for a specific driver"""
+        raise NotImplementedError()
+        
+    @abstractmethod
+    def get_session_raw_with_car_details(self, session_data_id: int) -> Optional[Dict[str, Any]]:
+        """Returns session with car details joined"""
         raise NotImplementedError()
 
 
@@ -250,16 +285,31 @@ class ISessionPAXRepo(ABC):
     @abstractmethod
     def get_session_pax_by_event(self, event_session_id: int) -> List[Dict[str, Any]]:
         raise NotImplementedError()
+        
+    @abstractmethod
+    def get_session_pax_by_car(self, car_id: int) -> List[Dict[str, Any]]:
+        """Returns all PAX sessions for a specific car"""
+        raise NotImplementedError()
+        
+    @abstractmethod
+    def get_session_pax_by_driver(self, driver_name: str) -> List[Dict[str, Any]]:
+        """Returns all PAX sessions for a specific driver"""
+        raise NotImplementedError()
+        
+    @abstractmethod
+    def get_session_pax_with_car_details(self, session_data_id: int) -> Optional[Dict[str, Any]]:
+        """Returns session with car details joined"""
+        raise NotImplementedError()
 
 
 class ISessionFinalRepo(ABC):
     """Repository interface for the Session_Final_Data table.
 
-    Table columns: session_data_id (PK), session_class_abrv, session_car_num, sf_has_trophy, sf_car_color, car_id, event_session_id
+    Table columns: session_data_id (PK), session_class_abrv, session_race_class,  session_car_num, sf_has_trophy, sf_car_color, car_id, event_session_id
     """
 
     @abstractmethod
-    def create_session_final(self, session_class_abrv: str, session_car_num: int, sf_has_trophy: bool, sf_car_color: str, car_id: int, event_session_id: int) -> int:
+    def create_session_final(self, session_class_abrv: str, session_race_class: str, session_car_num: int, sf_has_trophy: bool, sf_car_color: str, car_id: int, event_session_id: int) -> int:
         raise NotImplementedError()
 
     @abstractmethod
@@ -276,6 +326,26 @@ class ISessionFinalRepo(ABC):
 
     @abstractmethod
     def get_session_final_by_event(self, event_session_id: int) -> List[Dict[str, Any]]:
+        raise NotImplementedError()
+        
+    @abstractmethod
+    def get_session_final_by_car(self, car_id: int) -> List[Dict[str, Any]]:
+        """Returns all final sessions for a specific car"""
+        raise NotImplementedError()
+        
+    @abstractmethod
+    def get_session_final_by_driver(self, driver_name: str) -> List[Dict[str, Any]]:
+        """Returns all final sessions for a specific driver"""
+        raise NotImplementedError()
+        
+    @abstractmethod
+    def get_session_final_with_car_details(self, session_data_id: int) -> Optional[Dict[str, Any]]:
+        """Returns session with car details joined"""
+        raise NotImplementedError()
+        
+    @abstractmethod
+    def get_session_final_with_runs(self, session_data_id: int) -> Optional[Dict[str, Any]]:
+        """Returns final session with all its runs"""
         raise NotImplementedError()
 
 
