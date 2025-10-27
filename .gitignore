@@ -2,6 +2,10 @@ venv
 application.log
 application.log.1
 __pycache__/app.cpython-312.pyc
+__pycache__/
+__pycache__/*
+blueprints/__pycache__/
+blueprints/__pycache__/*
 blueprints/__pycache__/__init__.cpython-312.pyc
 blueprints/__pycache__/accounts.cpython-312.pyc
 blueprints/__pycache__/cars.cpython-312.pyc
@@ -18,3 +22,6 @@ classes/__pycache__/Parser.cpython-312.pyc
 classes/__pycache__/MySQLRepository.cpython-312.pyc
 classes/__pycache__/Repository.cpython-312.pyc
 classes/__pycache__/Requestor.cpython-312.pyc
+classes/__pycache__/*
+classes/__pycache__/
+logs/
