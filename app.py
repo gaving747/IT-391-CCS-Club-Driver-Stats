@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-#import mysql.connector
-#import os
+
+import mysql.connector
+import os
+from classes.Repository import Repo
 
 
 app = Flask(__name__)
@@ -10,12 +12,12 @@ app.secret_key = os.environ['SECRET_KEY']  # Needed for flash messages
 # -------------------------
 # MySQL connection
 # -------------------------
-#db = mysql.connector.connect(
-#    host="10.111.21.71",          # VM IP over VPN
-#    user="admin",                 # admin can connect remotely
-#    password=os.environ['ADMIN_PASS'],
-#    database="ccsccDB"
-#)
+db = mysql.connector.connect(
+   host="10.111.21.71",          # VM IP over VPN
+   user="admin",                 # admin can connect remotely
+   password=os.environ['ADMIN_PASS'],
+   database="ccsccDB"
+)
 
 # -------------------------
 # ROUTES
