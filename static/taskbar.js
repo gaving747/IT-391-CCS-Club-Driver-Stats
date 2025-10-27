@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
             const links = [
-                { text: "Race Schedule", href: "/schedule_race" },
-                { text: "Stats", href: "/stats" },
-                { text: "Login", href: "/login" },
+                {text: "Event Schedule", href : "schedule_race.html"},
+                {text: "Stats", href : "stats.html"},
+                {text: "Login", href : "login.html"},
             ];
 
             const taskbar = document.createElement("div");

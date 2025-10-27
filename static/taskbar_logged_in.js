@@ -1,11 +1,11 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     const links = [
-        {text: "Home", href : "/home_logged_in"},
-        {text: "Event Schedule", href : "/schedule_race_logged_in"},
-        {text: "Stats", href : "/stats_logged_in"}, 
-        {text: "Personal Stats", href : "/personal_stats"},
-        {text: "Weather", href : "/weather"},
+        {text: "Home", href : "driver_status_logged_in_home.html"},
+        {text: "Event Schedule", href : "schedule_race_logged_in.html"},
+        {text: "Stats", href : "logged_in_stats.html"},
+        {text: "Personal Stats", href : "personal_stats.html"},
+        {text: "Weather", href : "weather.html"},
     ];
 
     const taskbar = document.createElement("div");
@@ -35,20 +35,15 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const profileLink = document.createElement("a");
     profileLink.textContent = "View Profile";
-    //profileLink.href = "profile.html";//change this
-    profileLink.href = "/profile"
+    profileLink.href = "profile.html";//change this
 
     const garageLink = document.createElement("a");
     garageLink.textContent = "Garage";
-    //garageLink.href = "garage.html";//change this
-    garageLink.href = "/garage"
+    garageLink.href = "garage.html";//change this
 
     const signOutLink = document.createElement("a");
     signOutLink.textContent = "Sign Out";
-    //signOutLink.href = "index.html";//change this
-    signOutLink.href = "/logout";
-
-
+    signOutLink.href = "driver_status_home.html"
     dropdownContent.appendChild(profileLink);
     dropdownContent.appendChild(garageLink);
     dropdownContent.appendChild(signOutLink);
