@@ -2,81 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CCS Club Driver Stats</title>
+  <title>CCSCC Driver Stats</title>
+  <link rel="stylesheet" href="taskbar.css">
+  <link rel="stylesheet" href="widgets.css">
+  <link rel="stylesheet" href="header.css">
 <style>
     body {
         margin: 5;
         font-family: Arial, sans-serif;
     }
-    h1 {
-            text-align: center;
-            color: #333;
-        }
-    /*task bar*/
-    .taskbar{
-        background-color: grey;
-        overflow: hidden;
-    }
+  
 
-    .taskbar a{
-        float: left;
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
 
-    }
-
-    .taskbar a.right{
-        float: right;
-    }
-
-    .taskbar    a:hover{
-        background-color: grey;
-        color: black;
-    }
-
-    /*end of taskbar*/
-
-    /*widgets*/
-
-    .widgets{
-        display: flex;
-        gap: 20px;
-        padding: 20px;
-    }
-    .widget{
-        background: grey;
-        border-radius: 10px;
-        padding: 50px;
-        display: inline-block;
-    }
-    .widget h2{
-        margin-top: 0;
-        font: siz 1.2em;
-        color: #333;
-    }
-    /*end of widgets*/
-
+    
 </style>
 </head>
 
 <body>
-    <h1>
-        <button onclick="window.location.href='driver_status_home.html';" style="font-size: inherit; background: none; border: none; color: inherit; cursor: pointer;">
-    
+    <h1 class = "h1_style">
+        
+        <button onclick="window.location.href='driver_status_home.html';" class="h1_button_style">
 
-            CCS Club Driver Stats
+            <image src="logo.png" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 80px; vertical-align: middle; margin-right: 10px; padding-top: 20px; ">
+
         </button>
+        <span style = "font-size: xx-large; position: left ">CCSCC Stats </span>
+
     </h1>
     <div id="taskbar-container"></div>
     <div class ="widgets">
         <div class ="widget">
-            <h2>Driver Stats</h2>
+        <button onclick="window.location.href='stats.html';" style=" font-weight: bold; font-size: x-large; background: none; border: none; color: inherit; cursor: pointer;">
+            Driver Stats
+        </button>
             <p>input driver stats here</p>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='taskbar.js') }}"></script>
+
+    <div class ="widgets">
+        <div class ="widget">
+        <button onclick="window.location.href='stats.html';" style=" font-weight: bold; font-size: x-large; background: none; border: none; color: inherit; cursor: pointer;">
+            Last Event
+        </button>
+            <p>October 18 & 19, 2025</p>
+        </div>
+    </div>
+    <script src="taskbar.js"></script>
 </body>
 </html>

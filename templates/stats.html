@@ -3,58 +3,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CCS Club Driver Stats</title>
-<style>
-    body {
-        margin: 5;
-        font-family: Arial, sans-serif;
-    }
-    h1 {
-            text-align: center;
-            color: #333;
-        }
-    /*task bar*/ 
-    .taskbar{
-        background-color: grey;
-        overflow: hidden;
-    }
+  <title>CCSCC Driver Stats</title>
 
-    .taskbar a{
-        float: left;
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-
-    }
-
-    .taskbar a.right{
-        float: right;
-    }
-
-    .taskbar    a:hover{
-        background-color: grey;
-        color: black;
-    }
-
-
-    /*end of taskbar*/
+  <link rel="stylesheet" href="taskbar.css">
+  <link rel="stylesheet" href="widgets.css">
+  <link rel="stylesheet" href="header.css">
+  <style>
+      body {
+          margin: 5;
+          font-family: Arial, sans-serif;
+      }
+    
 
 </style>
 </head>
 
 <body>
 
-    <h1>
-        <button onclick="window.location.href='driver_status_home.html';" style="font-size: inherit; background: none; border: none; color: inherit; cursor: pointer;">
-    
+    <h1 class = "h1_style">
+        
+        <button onclick="window.location.href='driver_status_home.html';" class="h1_button_style"> 
+            <image src="logo.png" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 80px; vertical-align: middle; margin-right: 10px; padding-top: 20px;">
 
-            CCS Club Driver Stats
         </button>
+        <span style = "font-size: xx-large; position: left ">CCSCC Stats </span>
+
     </h1>
     <div id="taskbar-container"></div>
 
-    <script src="{{ url_for('static', filename='taskbar.js') }}"></script>
+    <script src="taskbar.js"></script>
 </body>
 </html>
