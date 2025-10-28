@@ -160,7 +160,7 @@ class IWeatherDataRepo(ABC):
     """
 
     @abstractmethod
-    def create_weather(self, cloud_cover: int, humidity: int, precip: float, high_temp: float, low_temp: float, pressure: float, wind_speed: float, wind_dir: int, event_session_id: int) -> int:
+    def create_weather(self, day_desc:str, day_icon:str, night_desc:str, night_icon:str, precip: float, high_temp: float, low_temp: float, pressure: float, wind_speed: float, wind_dir: int, event_session_id: int) -> int:
         raise NotImplementedError()
 
     @abstractmethod

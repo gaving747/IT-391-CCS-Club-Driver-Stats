@@ -49,7 +49,7 @@ db_config = {
     'host': "10.111.21.71",          # VM IP over VPN
     'user': "admin",                 # admin can connect remotely
     'password': os.environ['ADMIN_PASS'],
-    'database': "ccsccDB"
+    'database': "ccsccDBTest"
 }
 
 # Initialize database connection and repositories

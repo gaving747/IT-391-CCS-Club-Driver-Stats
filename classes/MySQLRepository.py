@@ -298,12 +298,12 @@ class MySQLWeatherDataRepo(IWeatherDataRepo):
     def __init__(self, conn: MySQLConnection):
         self._conn = conn
 
-    def create_weather(self, cloud_cover: int, humidity: int, precip: float, high_temp: float, low_temp: float, pressure: float, wind_speed: float, wind_dir: int, event_session_id: int) -> int:
-        q = ("INSERT INTO Weather_Data (cloud_cover, humidity, precip, high_temp, low_temp, pressure, wind_speed, wind_dir, event_session_id)"
-             " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
+    def create_weather(self, day_desc:str, day_icon:str, night_desc:str, night_icon:str, precip: float, high_temp: float, low_temp: float, pressure: float, wind_speed: float, wind_dir: int, event_session_id: int) -> int:
+        q = ("INSERT INTO Weather_Data (day_desc, day_icon, night_desc, night_icon, precip, high_temp, low_temp, pressure, wind_speed, wind_dir, event_session_id)"
+             " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
         with self._conn.get_conn() as c:
             cur = c.cursor()
-            cur.execute(q, (cloud_cover, humidity, precip, high_temp, low_temp, pressure, wind_speed, wind_dir, event_session_id))
+            cur.execute(q, (day_desc, day_icon, night_desc, night_icon, precip, high_temp, low_temp, pressure, wind_speed, wind_dir, event_session_id))
             c.commit()
             return int(cur.lastrowid or 0)
 

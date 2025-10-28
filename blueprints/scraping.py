@@ -57,7 +57,7 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
         for event in response_json:
             for date,content in event['sessions'].items():
                 if date not in weather_jsons.keys():
-                    weather_jsons[date] = weather_requestor.getWeatherJsonFromDate(date,delay=100)
+                    weather_jsons[date] = weather_requestor.getWeatherExpandedJsonWithWMOCodeInfo(date,delay=100)
                 for data in content:
                     data['weather'] = json.loads(weather_jsons[date])
         
@@ -65,6 +65,10 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
         for event in response_json:
 
             event_id = event_repo.create_event(event['name'],event.get('link'))
+
+            for chair in event['chairs']:
+                event_chair_repo.create_event_chair(event_id,chair)
+
 
             if event_id == 0:
                     logger.warning('event create failed')
@@ -77,6 +81,8 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
                 if event_session_id == 0:
                     logger.warning('event session create failed')
                     continue
+
+                
 
                 for session_data in sessions:
 
@@ -109,7 +115,7 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
                                 if list_of_cars:
                                     car_id = list_of_cars[0]['car_id']
                                 else:
-                                    car_id = car_repo.create_car(entry['driver_name'],car_info_expanded.group('make'),car_info_expanded.group('model'), car_year )
+                                    car_id = car_repo.create_car(entry['driver_name'],car_info_expanded.group('make'),car_info_expanded.group('model'),car_year)
 
                                 if car_id == 0:
                                     logger.warning('Car create failed')
@@ -208,9 +214,23 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
 
                     weather_data = session_data.get('weather')
                     if weather_data:
-                        daily = weather_data['daily']
-                        usa_pressure = daily['pressure_msl_mean'] * 0.02953
-                        weather_repo.create_weather(-1,-1,daily['precipitation_sum'],daily['temperature_2m_max'],daily['temperature_2m_min'],usa_pressure,daily['wind_speed_10m_mean'],daily['wind_direction_10m_dominant'],event_session_id)
+                        daily = weather_data.get('daily')
+                        if not daily:
+                            logger.warning('Weather request didn\'t provide needed data')
+                            continue
+                        usa_pressure = daily['pressure_msl_mean'].get(0) * 0.02953
+                        expanded_info = daily.get('weather_visual')
+
+                        weather_repo.create_weather(expanded_info.get('day').get('description'),
+                                                    expanded_info.get('day').get('image'),
+                                                    expanded_info.get('night').get('description'),
+                                                    expanded_info.get('night').get('image'),
+                                                    daily['precipitation_sum'].get(0),
+                                                    daily['temperature_2m_max'].get(0),
+                                                    daily['temperature_2m_min'].get(0),
+                                                    usa_pressure,daily['wind_speed_10m_mean'].get(0),
+                                                    daily['wind_direction_10m_dominant'].get(0),
+                                                    event_session_id)
 
 
         return response_json,200
