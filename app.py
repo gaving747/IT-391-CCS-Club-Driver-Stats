@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import mysql.connector
 
+
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'  # Needed for flash messages
 
@@ -33,7 +34,17 @@ def stats():
 
 @app.route('/home_logged_in')
 def home_logged_in():
-    return render_template('driver_status_logged_in_home.html')
+    cursor = db.cursor(dictionary=True)
+    user_driver_name = session.get('drivername')
+
+    cursor.execute(
+        "SELECT * FROM Car WHERE car_driver_name = %s ORDER BY car_ID DESC LIMIT 1", (user_driver_name,)
+    )
+
+    latest_car = cursor.fetchone()
+    cursor.close()
+
+    return render_template('driver_status_logged_in_home.html', latest_car=latest_car)
 
 @app.route('/schedule_race_logged_in')
 def schedule_race_logged_in():
