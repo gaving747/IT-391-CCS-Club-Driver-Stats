@@ -120,6 +120,7 @@
           <th>Year</th>
           <th>Make</th>
           <th>Model</th>
+          <th>Wheelbase</th>
           <th>Tire Description</th>
           <th>Weight</th>
           <!--<th>Action</th>-->
@@ -130,6 +131,7 @@
           <td>{{ car.car_year }}</td>
           <td>{{ car.car_make }}</td>
           <td>{{ car.car_model }}</td>
+          <td>{{ car.wheelbase or 'N/A' }}</td>
           <td>{{car.tire_description}}</td>
           <td>{{ car.weight or 'N/A' }}</td>
           <!--<td>
