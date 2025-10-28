@@ -2,31 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CCS Club Driver Stats</title>
-  <!--<link rel="stylesheet" href="taskbar_logged_in.css">-->
-   <link rel="stylesheet" href="{{ url_for('static', filename='taskbar_logged_in.css') }}">
-<style>
-    body {
-        margin: 5;
-        font-family: Arial, sans-serif;
-    }
-    h1 {
-            text-align: center;
-            color: #333;
-        }
-   
+  <title>CCSCC Driver Stats</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='taskbar_logged_in.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='widgets.css') }}">
+
+  <style>
+      body {
+          margin: 5;
+          font-family: Arial, sans-serif;
+      }
+    
 
 </style>
 </head>
 
 <body>
-
-    <h1>
-        <button onclick="window.location.href='driver_status_home.html';" style="font-size: inherit; background: none; border: none; color: inherit; cursor: pointer;">
     
+    <h1 class = "h1_style">
+        
+        <!--<button onclick="window.location.href='driver_status_logged_in_home.html';" class="h1_button_style">
+          
+            <image src="logo.png" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 80px; vertical-align: middle; margin-right: 10px;padding-top: 20px; ">
 
-            CCS Club Driver Stats
+        </button>-->
+        <button onclick="window.location.href='/home_logged_in';" class="h1_button_style">
+            
+            <image src="{{ url_for('static', filename='logo.png') }}" alt="CCSCC Logo">
+        
         </button>
+        <span style = "font-size: xx-large; position: left ">CCSCC Stats </span>
+
+        <!--<span style="font-size: xx-large; display: block; text-align: center;">CCSCC Stats</span>-->
+        
+
     </h1>
     <div id="taskbar-container"></div>
 

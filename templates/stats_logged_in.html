@@ -1,89 +1,64 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CCS Club Driver Stats</title>
+  <title>CCSCC Driver Stats</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='taskbar_logged_in.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='widgets.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
+  
+
 <style>
     body {
         margin: 5;
         font-family: Arial, sans-serif;
     }
-    h1 {
-            text-align: center;
-            color: #333;
-        }
-    /*task bar*/ 
-    .taskbar{
-        background-color: grey;
-        overflow: hidden;
-    }
-
-    .taskbar a{
-        float: left;
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-
-    }
-
-    .taskbar a.right{
-        float: right;
-    }
-
-    .taskbar    a:hover{
-        background-color: grey;
-        color: black;
-    }
+  
 
 
-    /*end of taskbar*/
-
+    
 </style>
 </head>
 
 <body>
+    <h1 class = "h1_style">
+        
+        <!--<button onclick="window.location.href='driver_status_home.html';" class="h1_button_style">
 
-    <h1>
-        <button onclick="window.location.href='driver_status_logged_in_home.html';" style="font-size: inherit; background: none; border: none; color: inherit; cursor: pointer;">
-    
+            <image src="logo.png" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 80px; vertical-align: middle; margin-right: 10px; padding-top: 20px; ">
 
-            CCS Club Driver Stats
-        </button>
-    </h1>
-    <div id="taskbar-container"></div>
+        </button>-->
 
-        <script>
-            const links = [
-                {text: "Account Management", href : "account_management.html"},
-                {text: "Race Schedule", href : "schedule_race_logged_in.html"},
-                {text: "Garage", href : "garage.html"},
-                {text: "Stats", href : "stats_logged_in.html"},
-                {text: "Personal Stats", href : "personal_stats.html"},
-                {text: "Weather", href : "weather.html"},
-                {text: "Sign Out", href : "driver_status_home.html"},
-            ];
-
-            const taskbar = document.createElement("div");
-            taskbar.className = "taskbar";
-
-            links.forEach(link=>{
-                const a = document.createElement("a");
-                a.textContent =link.text;
-                a.href = link.href;
-
-                if(link.text === "Sign Out"){
-                    a.className = "right";
-                }
-
-                taskbar.appendChild(a);
-            });
-
-            document.getElementById("taskbar-container").appendChild(taskbar);
-
+         <button onclick="window.location.href='/home_logged_in';" class="h1_button_style">
             
-        </script>
+            <image src="{{ url_for('static', filename='logo.png') }}" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 80px; vertical-align: middle; margin-right: 10px;padding-top: 20px; ">
+        
+
+        </button>
+        <span style = "font-size: xx-large; position: left ">CCSCC Stats </span>
+
+    </h1><!--
+    <div id="taskbar-container"></div>
+    <div class ="widgets">
+        <div class ="widget">
+        <button onclick="window.location.href='stats.html';" style=" font-weight: bold; font-size: x-large; background: none; border: none; color: inherit; cursor: pointer;">
+            Driver Stats
+        </button>
+            <p>input driver stats here</p>
+        </div>
+    </div>
+            -->
+    <div class ="widgets">
+        <div class ="widget">
+        <!--<button onclick="window.location.href='stats.html';" style=" font-weight: bold; font-size: x-large; background: none; border: none; color: inherit; cursor: pointer;">-->
+        <button onclick="window.location.href='/stats_logged_in';" style=" font-weight: bold; font-size: x-large; background: none; border: none; color: inherit; cursor: pointer;">
+            Last Event
+        </button>
+            <p>October 18 & 19, 2025</p>
+        </div>
+    </div>
+    <!--<script src="taskbar.js"></script>-->
+    <script src="{{ url_for('static', filename='taskbar_logged_in.js') }}"></script>
+
 </body>
 </html>
