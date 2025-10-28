@@ -20,10 +20,15 @@
 
     <h1 class = "h1_style">
         
-        <button onclick="window.location.href='driver_status_logged_in_home.html';" class="h1_button_style">
+        <!--<button onclick="window.location.href='driver_status_logged_in_home.html';" class="h1_button_style">
             
             <image src="logo.png" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 80px; vertical-align: middle; margin-right: 10px;padding-top: 20px; ">
 
+        </button>-->
+        <button onclick="window.location.href='/home_logged_in';" class="h1_button_style">
+            
+            <image src="{{ url_for('static', filename='logo.png') }}" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 80px; vertical-align: middle; margin-right: 10px;padding-top: 20px; ">
+        
         </button>
         <span style = "font-size: xx-large; position: left ">CCSCC Stats </span>
 
@@ -106,6 +111,8 @@
     </section>
 
    
-    <script src="taskbar_logged_in.js"></script>
+    <!--<script src="taskbar_logged_in.js"></script>-->
+    <script src="{{ url_for('static', filename='taskbar_logged_in.js') }}"></script>
+
 </body>
 </html>

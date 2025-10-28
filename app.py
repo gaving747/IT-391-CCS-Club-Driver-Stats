@@ -41,7 +41,7 @@ def schedule_race_logged_in():
 
 @app.route('/stats_logged_in')
 def stats_logged_in():
-    return render_template('logged_in_stats.html')
+    return render_template('stats_logged_in.html')
 
 @app.route('/personal_stats')
 def personal_stats():

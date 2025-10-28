@@ -76,21 +76,27 @@
 
 <body>
   <h1 style="display: flex; font-size: inherit; justify-content: center;align-items: center; position: relative;">
-        
+        <!--
         <button onclick="window.location.href='driver_status_logged_in_home.html';" style =" font-size: inherit; background: none; border: none; color: inherit; cursor: pointer; display: flex; align-items: center; ">
             
             <image src="logo.png" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 50px; vertical-align: middle; margin-right: 10px; ">
 
+        </button>-->
+            <button onclick="window.location.href='/home_logged_in';" class="h1_button_style">
+            
+            <image src="{{ url_for('static', filename='logo.png') }}" alt="CCSCC Logo">
+        
         </button>
         <span style = "font-size: x-large; position: left ">CCSCC Stats </span>
 
     </h1>
     <div id="taskbar-container"></div>
-
+<!--
     <div class = "buttons">
             <button class="action-btn" onclick="showAddCar()">Add Car</button>
             <button class="action-btn" onclick="removeAllCars()">Remove All Cars</button>
     </div>
+  -->
   <!-- Car List -->
   <div class="car-list">
     <h2>Your Cars</h2>
