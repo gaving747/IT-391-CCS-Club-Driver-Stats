@@ -189,6 +189,31 @@ def garage():
     return render_template('garage.html', cars=cars)
 
 
+@app.route('/delete_car/<int:car_id>', methods=['POST'])
+def delete_car(car_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    cursor = db.cursor()
+    user_driver_name = session.get('drivername')
+
+    cursor.execute(
+        "SELECT * FROM Car WHERE car_ID = %s AND car_driver_name = %s",
+        (car_id, user_driver_name)
+    )
+
+    car = cursor.fetchone()
+    if car:
+        cursor.execute("DELETE FROM Car WHERE car_ID = %s", (car_id,))
+        db.commit()
+        flash("Car deleted successfully.", "success")
+    else:
+        flash("Car not found or you do not have permission to delete it.", "danger")
+
+    cursor.close()
+    return redirect(url_for('garage'))
+
+
 
 # -------------------------
 # RUN FLASK

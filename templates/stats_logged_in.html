@@ -37,7 +37,9 @@
         </button>
         <span style = "font-size: xx-large; position: left ">CCSCC Stats </span>
 
-    </h1><!--
+    </h1>
+    <div id="taskbar-container"></div>
+    <!--
     <div id="taskbar-container"></div>
     <div class ="widgets">
         <div class ="widget">
@@ -47,16 +49,17 @@
             <p>input driver stats here</p>
         </div>
     </div>
-            -->
+            
     <div class ="widgets">
         <div class ="widget">
-        <!--<button onclick="window.location.href='stats.html';" style=" font-weight: bold; font-size: x-large; background: none; border: none; color: inherit; cursor: pointer;">-->
+        <button onclick="window.location.href='stats.html';" style=" font-weight: bold; font-size: x-large; background: none; border: none; color: inherit; cursor: pointer;"> 
         <button onclick="window.location.href='/stats_logged_in';" style=" font-weight: bold; font-size: x-large; background: none; border: none; color: inherit; cursor: pointer;">
             Last Event
         </button>
             <p>October 18 & 19, 2025</p>
-        </div>
-    </div>
+       </div>
+    </div>-->
+    
     <!--<script src="taskbar.js"></script>-->
     <script src="{{ url_for('static', filename='taskbar_logged_in.js') }}"></script>
 

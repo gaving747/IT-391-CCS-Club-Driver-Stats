@@ -6,6 +6,7 @@
     <title>CCSCC Driver Stats</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='taskbar_logged_in.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='widgets.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
 
       
     <style>
@@ -73,7 +74,7 @@
         </button>-->
         <button onclick="window.location.href='/home_logged_in';" class="h1_button_style">
             
-            <image src="{{ url_for('static', filename='logo.png') }}" alt="CCSCC Logo">
+            <image src="{{ url_for('static', filename='logo.png') }}" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 80px; vertical-align: middle; margin-right: 10px;padding-top: 20px; "></image>
         
         </button>
         <span style = "font-size: xx-large; position: left ">CCSCC Stats </span>
