@@ -63,11 +63,18 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
         
 
         for event in response_json:
-
-            event_id = event_repo.create_event(event['name'],event.get('link'))
+            
+            event_id = 0
+            try:
+                event_id = event_repo.create_event(event['name'],event.get('link'))
+            except Error as err:
+                                        logger.warning(err)
 
             for chair in event['chairs']:
-                event_chair_repo.create_event_chair(event_id,chair)
+                try:
+                    event_chair_repo.create_event_chair(event_id,chair)
+                except Error as err:
+                    logger.warning(err)
 
 
             if event_id == 0:
@@ -77,10 +84,6 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
             for date,sessions in event['sessions'].items():
 
                 event_session_id = event_session_repo.create_event_session(date,event_id)
-
-                if event_session_id == 0:
-                    logger.warning('event session create failed')
-                    continue
 
                 
 
@@ -111,21 +114,25 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
 
                                 list_of_cars = car_repo.get_cars_by_params(car_info_expanded.group('make'),car_info_expanded.group('model'),car_year ,entry['driver_name'])
 
-                                car_id = None
+                                car_id = -1
                                 if list_of_cars:
                                     car_id = list_of_cars[0]['car_id']
                                 else:
-                                    car_id = car_repo.create_car(entry['driver_name'],car_info_expanded.group('make'),car_info_expanded.group('model'),car_year)
+                                    try:
+                                        car_id = car_repo.create_car(entry['driver_name'],car_info_expanded.group('make'),car_info_expanded.group('model'),car_year)
+                                    except Error as err:
+                                        logger.warning(err)
 
-                                if car_id == 0:
-                                    logger.warning('Car create failed')
-                                    continue
+                               
+
+                                entry_id = 0
+                                try:
+                                    entry_id = session_raw_repo.create_session_raw(entry['class_abrv'],entry['car_num'],entry['raw_time'],car_id,event_session_id)
+                                except Error as err:
+                                        logger.warning(err)
+
+
                                 
-                                entry_id = session_raw_repo.create_session_raw(entry['class_abrv'],entry['car_num'],entry['raw_time'],car_id,event_session_id)
-
-                                if entry_id == 0:
-                                    logger.warning('Entry create failed')
-                                    continue
 
 
                         case 'pax':
@@ -140,7 +147,7 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
                                 car_year= None
                                 if car_info_expanded.group('year'):
                                     car_year = int (car_info_expanded.group('year'))
-
+    
                             
                                 list_of_cars = car_repo.get_cars_by_params(car_info_expanded.group('make'),car_info_expanded.group('model'),car_year ,entry['driver_name'])
                                
@@ -149,19 +156,25 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
                                 if list_of_cars:
                                     car_id = list_of_cars[0]['car_id']
                                 else:
-                                    car_id = car_repo.create_car(entry['driver_name'],car_info_expanded.group('make'),car_info_expanded.group('model'), car_year )
+                                    try:
+                                        car_id = car_repo.create_car(entry['driver_name'],car_info_expanded.group('make'),car_info_expanded.group('model'), car_year )
+                                    except Error as err:
+                                        car_id = car_repo.get_cars_by_params(car_info_expanded.group('make'),car_info_expanded.group('model'), car_year, entry['driver_name'])
+                                        logger.warning(err)
 
-                                if car_id == 0:
-                                    logger.warning('Car create failed')
-                                    continue
+                              
                                 
-                                sp_raw_time = entry['pax_time']/entry['pax_factor']
+                                sp_raw_time = float(entry['pax_time'])/float(entry['pax_factor'])
 
-                                entry_id = session_pax_repo.create_session_pax(entry['class_abrv'],entry['car_num'],sp_raw_time,entry['pax_factor'],entry['pax_time'],car_id,event_session_id)
+                                entry_id = 0
+                                try:
+                                    entry_id = session_pax_repo.create_session_pax(entry['class_abrv'],int(entry['car_num']),sp_raw_time,float(entry['pax_factor']),float(entry['pax_time']),car_id,event_session_id)
+                                except Error as err:
+                                        #entry_id = session_pax_repo.get_session_pax()
+                                        logger.warning(err)
 
-                                if entry_id == 0:
-                                    logger.warning('Entry create failed')
-                                    continue
+
+                                
 
                         case 'fin':
 
@@ -170,7 +183,7 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
                             for c_entry in session_data['data']['class_entries']:
                                 race_class_name = c_entry['race_class_name']
                                 race_class_abrv = c_entry['race_class_abrv']
-                                for entry in c_entry:
+                                for entry in c_entry['entries']:
 
                                     car_info_expanded = re.search(r'((?P<year>\d{4})[ \t]+)?(?P<make>\w+)[ \t]+(?P<model>.*)',entry['car_model'])
 
@@ -188,24 +201,26 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
                                     if list_of_cars:
                                         car_id = list_of_cars[0]['car_id']
                                     else:
-                                        car_id = car_repo.create_car(entry['driver_name'],car_info_expanded.group('make'),car_info_expanded.group('model'), car_year )
+                                        try:
+                                            car_id = car_repo.create_car(entry['driver_name'],car_info_expanded.group('make'),car_info_expanded.group('model'), car_year )
+                                        except Error as err:
+                                            logger.warning(err)
 
-                                    if car_id == 0:
-                                        logger.warning('Car create failed')
-                                        continue
+                                  
+                                        
+                                    entry_id = 0
+                                    try:    
+                                        entry_id = session_final_repo.create_session_final(entry['class_abrv'],race_class_name,int(entry['car_num']),bool(entry['has_trophy']),entry['car_color'],car_id,event_session_id)
+                                    except Error as err:
+                                        logger.warning(err)
 
-                                    entry_id = session_final_repo.create_session_final(entry['class_abrv'],race_class_name,entry['car_num'],entry['has_trophy'],entry['car_color'],car_id,event_session_id)
-
-                                    if entry_id == 0:
-                                        logger.warning('Entry create failed')
-                                        continue
 
                                     for run in entry['runs']:
-                                        run_repo.create_run(run['time'],run['isDNF'],run['num_penalties'],entry_id)
+                                        try:
+                                            run_repo.create_run(float(run['time']),bool(run['isDNF']),int(run['num_penalties']),entry_id)
+                                        except Error as err:
+                                            logger.warning(err)
 
-                                    if entry_id == 0:
-                                        logger.warning('Entry create failed')
-                                        continue
                             
                         
                         case _:
@@ -218,19 +233,22 @@ def init_scrape_routes(weather_requestor:WeatherRequestor, event_page_scraper:Ev
                         if not daily:
                             logger.warning('Weather request didn\'t provide needed data')
                             continue
-                        usa_pressure = daily['pressure_msl_mean'].get(0) * 0.02953
+                        usa_pressure = daily['pressure_msl_mean'][0] * 0.02953
                         expanded_info = daily.get('weather_visual')
-
-                        weather_repo.create_weather(expanded_info.get('day').get('description'),
+                        
+                        try:
+                            weather_repo.create_weather(expanded_info.get('day').get('description'),
                                                     expanded_info.get('day').get('image'),
                                                     expanded_info.get('night').get('description'),
                                                     expanded_info.get('night').get('image'),
-                                                    daily['precipitation_sum'].get(0),
-                                                    daily['temperature_2m_max'].get(0),
-                                                    daily['temperature_2m_min'].get(0),
-                                                    usa_pressure,daily['wind_speed_10m_mean'].get(0),
-                                                    daily['wind_direction_10m_dominant'].get(0),
+                                                    daily['precipitation_sum'][0],
+                                                    daily['temperature_2m_max'][0],
+                                                    daily['temperature_2m_min'][0],
+                                                    usa_pressure,daily['wind_speed_10m_mean'][0],
+                                                    daily['wind_direction_10m_dominant'][0],
                                                     event_session_id)
+                        except Error as err:
+                                    logger.warning(err)
 
 
         return response_json,200

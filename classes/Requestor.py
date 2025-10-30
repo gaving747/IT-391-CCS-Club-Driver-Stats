@@ -496,6 +496,7 @@ class WeatherRequestor(Requestor):
 
         if self.METEO_WEATHER_CODES.get(wmo_code):
             json_dict['daily']['weather_visual'] = self.METEO_WEATHER_CODES[wmo_code]
+            logger.debug(f'Appended weather_visual to dict')
         else:
             logger.warning(f'Found wmo_code {wmo_code} not in WeatherRequestor\'s dict')
 
