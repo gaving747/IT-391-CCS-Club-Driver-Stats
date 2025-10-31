@@ -168,11 +168,16 @@ class RawDataPageParser(RawDataPageParserBase):
 
             columns = [*map(lambda x: x.get_text(), entry_columns)]
 
-            entry['class_abrv'] = columns[2]
-            entry['car_num'] = columns[3]
-            entry['driver_name'] = columns[4]
-            entry['car_model'] = columns[5]
-            entry['raw_time'] = columns[6]
+            entry['class_abrv'] = columns[2].strip()
+            entry['car_num'] = columns[3].strip()
+            entry['driver_name'] = columns[4].strip()
+            entry['car_model'] = columns[5].strip()
+            
+            raw_time = re.search(r'(\d*\.\d*)',columns[6])
+            if raw_time:
+                entry['raw_time'] = raw_time.group(0)
+            else:
+                continue 
 
             logger.debug(f'Found entry: {entry}')
 
@@ -236,17 +241,28 @@ class PaxDataPageParser(PaxDataPageParserBase):
             #Convert all columns to text
             columns = [*map(lambda x: x.get_text(), entry_columns)]
 
-            entry['class_abrv'] = columns[2]
-            entry['car_num'] = columns[3]
-            entry['driver_name'] = columns[4]
-            entry['car_model'] = columns[5]
-            entry['pax_factor'] = columns[7][1:]
-            entry['pax_time'] = columns[8]
+            entry['class_abrv'] = columns[2].strip()
+            entry['car_num'] = columns[3].strip()
+            entry['driver_name'] = columns[4].strip()
+            entry['car_model'] = columns[5].strip()
+
+            pax_factor = re.search(r'(\d*\.\d*)',columns[7])
+            if pax_factor:
+                entry['pax_factor'] = pax_factor.group(0)
+
+            pax_time = re.search(r'(\d*\.\d*)',columns[8])
+            if pax_time:
+                entry['pax_time'] = pax_time.group(0)
+            else:
+                logger.warning(f'Did not enter pax {entry}')
+                continue
+            
 
             logger.debug(f'Found entry: {entry}')
 
             #Add entry to page entry list
-            paxPageData['entries'].append(entry)
+            if entry['pax_time']:
+                paxPageData['entries'].append(entry)
 
         return paxPageData
     
