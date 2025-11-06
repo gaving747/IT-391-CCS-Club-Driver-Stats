@@ -9,6 +9,64 @@
     z-index: 1000;
 }
 
+.hamburger {
+    display: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    background: none;
+    border: none;
+    color: white;
+}
+
+.hamburger .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 5px 0;
+    transition: 0.4s;
+}
+
+@media screen and (max-width: 560px) {
+    .hamburger {
+        display: block;
+    }
+
+    .taskbar {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+    }
+
+    .taskbar.active {
+        padding-bottom: 10px;
+    }
+
+    .taskbar a:not(.right), .dropdown {
+        display: none;
+        width: 100%;
+    }
+
+    .taskbar.active a:not(.right), .taskbar.active .dropdown {
+        display: block;
+    }
+
+    .dropdown {
+        margin-left: 0;
+    }
+
+    .dropdown-content {
+        position: static;
+        width: 100%;
+        box-shadow: none;
+    }
+
+    .dropbtn {
+        width: 100%;
+        text-align: left;
+    }
+}
+
 
 .taskbar a{
     float: left;
