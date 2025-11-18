@@ -200,7 +200,26 @@ def garage():
     return render_template('garage.html', cars=cars)
 
 
-
+@app.route('/garage/delete_car/<int:car_id>', methods=['POST'])
+def delete_car(car_id):
+    cursor = db.cursor()
+    car_driver_name = session.get('drivername')
+    cursor.execute(
+        "SELECT car_driver_name FROM Car WHERE car_id = %s", (car_id,)
+    )
+   
+    result = cursor.fetchone()
+    if  result and result[0] == car_driver_name:
+        flash(" Car Deleted", "Success")
+        cursor.execute(
+            "DELETE FROM Car WHERE car_id = %s",(car_id,)
+        )
+        db.commit()
+    else:
+        flash("You are not authorized to delete this car.", "unsuccessful")
+    
+    cursor.close()
+    return redirect(url_for('garage'))
 
 # -------------------------
 # RUN FLASK
