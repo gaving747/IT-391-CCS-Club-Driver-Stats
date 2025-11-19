@@ -50,6 +50,7 @@ def init_web_routes(account_repo, car_repo, db):
     def garage():
         cursor = db.cursor(dictionary=True)
         user_driver_name = session.get('drivername')
+        
 
         # Fetch cars for logged-in user
         cursor.execute(

@@ -24,7 +24,8 @@ from blueprints.web import web_routes, init_web_routes
 from blueprints.scraping import api_scrape, init_scrape_routes
 
 app = Flask(__name__)
-app.secret_key = os.environ['SECRET_KEY']  # Needed for flash messages
+app.secret_key = 'asdasdsadsadsa'
+
 
 
 #Initiating logger
@@ -48,8 +49,8 @@ logging.basicConfig(level=logging.DEBUG,handlers=[file_handler,stream_handler])
 db_config = {
     'host': "10.111.21.71",          # VM IP over VPN
     'user': "admin",                 # admin can connect remotely
-    'password': os.environ['ADMIN_PASS'],
-    'database': "ccsccDBTest"
+    'password': 'admin#ab12cd34',
+    'database': "ccsccDB"
 }
 
 # Initialize database connection and repositories
