@@ -37,84 +37,24 @@
 
     <!-- Events list: date on the left, day links on the right -->
     <section id="events-list" aria-label="Race schedule events" style="max-width:900px; margin: 1rem auto; padding: 0 1rem;">
-        <h2 style="text-align:left; font-size:1.25rem; margin-bottom:0.5rem;">2025 Event Scdedule</h2>
+        <h2 style="text-align:left; font-size:1.25rem; margin-bottom:0.5rem;">2025 Event Schedule</h2>
+        
+        {% if events %}
         <ul style="list-style:none; padding:0; margin:0;">
+            {% for event in events %}
             <li class="event-row" style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #e6e6e6;">
-                <div class="event-date" style="flex:0 0 160px; color:#444; font-weight:600;">March 22 & 23, 2025</div>
-                <div class="event-links" style="display:flex; gap:0.5rem;">
-                    <button class="day-link" onclick="location.href='race_schedule.html#day1'">Saturday</button>
-                    <button class="day-link" onclick="location.href='race_schedule.html#day2'">Sunday</button>
+                <div style="flex:1;">
+                    <div class="event-date" style="color:#444; font-weight:600;">{{ event.date }}</div>
+                    <div class="event-name" style="color:#666; font-size:0.9rem;">{{ event.name }}</div>
                 </div>
             </li>
-
-            <li class="event-row" style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #e6e6e6;">
-                <div class="event-date" style="flex:0 0 160px; color:#444; font-weight:600;">April 12 & 13, 2025</div>
-                <div class="event-links" style="display:flex; gap:0.5rem;">
-                    <button class="day-link" onclick="location.href='race_schedule.html#day1'">Saturday</button>
-                    <button class="day-link" onclick="location.href='race_schedule.html#day2'">Sunday</button>
-                </div>
-            </li>
-
-            <li class="event-row" style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #e6e6e6;">
-                <div class="event-date" style="flex:0 0 160px; color:#444; font-weight:600;">May 17 & 18, 2025</div>
-                <div class="event-links" style="display:flex; gap:0.5rem;">
-                    <button class="day-link" onclick="location.href='race_schedule.html#day1'">Saturday</button>
-                    <button class="day-link" onclick="location.href='race_schedule.html#day2'">Sunday</button>
-                </div>
-            </li>
-
-            <li class="event-row" style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #e6e6e6;">
-                <div class="event-date" style="flex:0 0 160px; color:#444; font-weight:600;">June 21, 2025</div>
-                <div class="event-links" style="display:flex; gap:0.5rem;">
-                    <button class="day-link" onclick="location.href='race_schedule.html#day1'">Saturday</button>
-                    <button class="day-link" onclick="location.href='race_schedule.html#day2'">Sunday</button>
-                </div>
-            </li>
-
-             <li class="event-row" style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #e6e6e6;">
-                <div class="event-date" style="flex:0 0 160px; color:#444; font-weight:600;">July 19, 2025</div>
-                <div class="event-links" style="display:flex; gap:0.5rem;">
-                    <button class="day-link" onclick="location.href='race_schedule.html#day1'">Saturday</button>
-                    <button class="day-link" onclick="location.href='race_schedule.html#day2'">Sunday</button>
-                </div>
-
-            </li>
-
-             <li class="event-row" style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #e6e6e6;">
-                <div class="event-date" style="flex:0 0 160px; color:#444; font-weight:600;">August 9, 2025</div>
-                <div class="event-links" style="display:flex; gap:0.5rem;">
-                    <button class="day-link" onclick="location.href='race_schedule.html#day1'">Saturday</button>
-                    <button class="day-link" onclick="location.href='race_schedule.html#day2'">Sunday</button>
-                </div>
-            </li>
-
-            </li>
-
-             <li class="event-row" style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #e6e6e6;">
-                <div class="event-date" style="flex:0 0 160px; color:#444; font-weight:600;">September 20 & 21, 2025</div>
-                <div class="event-links" style="display:flex; gap:0.5rem;">
-                    <button class="day-link" onclick="location.href='race_schedule.html#day1'">Saturday</button>
-                    <button class="day-link" onclick="location.href='race_schedule.html#day2'">Sunday</button>
-                </div>
-            </li>
-
-            </li>
-
-             <li class="event-row" style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #e6e6e6;">
-                <div class="event-date" style="flex:0 0 160px; color:#444; font-weight:600;">October 18 & 19, 2025</div>
-                <div class="event-links" style="display:flex; gap:0.5rem;">
-                    <button class="day-link" onclick="location.href='race_schedule.html#day1'">Saturday</button>
-                    <button class="day-link" onclick="location.href='race_schedule.html#day2'">Sunday</button>
-                </div>
-            </li>
-            <li class="event-row" style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #e6e6e6;">
-                <div class="event-date" style="flex:0 0 160px; color:#444; font-weight:600;">November 8 & 9, 2025</div>
-                <div class="event-links" style="display:flex; gap:0.5rem;">
-                    <button class="day-link" onclick="location.href='race_schedule.html#day1'">Saturday</button>
-                    <button class="day-link" onclick="location.href='race_schedule.html#day2'">Sunday</button>
-                </div>
-            </li>
+            {% endfor %}
         </ul>
+        {% else %}
+        <p style="text-align:center; color:#666; padding:2rem;">
+            Unable to load schedule. Please check back later.
+        </p>
+        {% endif %}
     </section>
 
    

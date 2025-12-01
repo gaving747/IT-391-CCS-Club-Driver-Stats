@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from classes.SchedulePageScrapper import get_schedule
+from datetime import datetime
 import mysql.connector
-
+import requests
+import re
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'  # Needed for flash messages
@@ -15,18 +18,133 @@ db = mysql.connector.connect(
     database="ccsccDB"
 )
 
+# ----------------------------
+# DRIVER DATA
+# ----------------------------
+driver_stats = [
+    {"driver": "Ninel Benitez", "event_date": "2024-10-18", "car_class": "STX", "raw_time": 55.23, "pax_index": 0.801, "penalties": 2},
+    {"driver": "Ava Smith", "event_date": "2024-09-22", "car_class": "GS", "raw_time": 54.89, "pax_index": 0.785, "penalties": 0},
+    {"driver": "Thaleina Cruz", "event_date": "2024-08-12", "car_class": "DS", "raw_time": 56.02, "pax_index": 0.796, "penalties": 1},
+    {"driver": "Carlos Martinez", "event_date": "2024-07-18", "car_class": "STR", "raw_time": 53.44, "pax_index": 0.799, "penalties": 0},
+    {"driver": "Brianna Lopez", "event_date": "2024-07-18", "car_class": "HS", "raw_time": 58.91, "pax_index": 0.795, "penalties": 1},
+    {"driver": "Marcus Green", "event_date": "2024-06-14", "car_class": "SS", "raw_time": 51.28, "pax_index": 0.812, "penalties": 0},
+    {"driver": "Ethan Miller", "event_date": "2024-06-14", "car_class": "GS", "raw_time": 52.30, "pax_index": 0.785, "penalties": 0},
+    {"driver": "Olivia Johnson", "event_date": "2024-06-14", "car_class": "ES", "raw_time": 59.72, "pax_index": 0.798, "penalties": 1},
+    {"driver": "Daniel Reyes", "event_date": "2024-05-20", "car_class": "STU", "raw_time": 57.19, "pax_index": 0.801, "penalties": 0},
+    {"driver": "Sofia Alvarez", "event_date": "2024-05-20", "car_class": "HS", "raw_time": 60.44, "pax_index": 0.795, "penalties": 1},
+    {"driver": "Mason Wright", "event_date": "2024-04-10", "car_class": "STS", "raw_time": 55.80, "pax_index": 0.802, "penalties": 0},
+    {"driver": "Isabella Flores", "event_date": "2024-04-10", "car_class": "GS", "raw_time": 58.20, "pax_index": 0.785, "penalties": 2},
+]
+
+
+# ----------------------------
+# WEATHER LOOKUP FUNCTION
+# ----------------------------
+def lookup_weather(date):
+    url = (
+        "https://archive-api.open-meteo.com/v1/archive"
+        f"?latitude=40.5142&longitude=-88.9906"
+        f"&start_date={date}&end_date={date}"
+        "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode"
+        "&timezone=America/Chicago"
+    )
+
+    try:
+        res = requests.get(url, timeout=10).json()
+        if "daily" not in res:
+            return {"high": None, "low": None, "precip": None, "conditions": "N/A"}
+
+        d = res["daily"]
+
+        high = round((d["temperature_2m_max"][0] * 9/5) + 32, 1)
+        low = round((d["temperature_2m_min"][0] * 9/5) + 32, 1)
+        precip = d["precipitation_sum"][0]
+
+        code_map = {
+            0: "Clear ☀️",
+            2: "Partly Cloudy ⛅",
+            3: "Overcast ☁️",
+            61: "Light Rain 🌧",
+            63: "Moderate Rain 🌧",
+            65: "Heavy Rain 🌧🌧"
+        }
+
+        cond = code_map.get(d["weathercode"][0], "Unknown")
+
+        return {
+            "high": high,
+            "low": low,
+            "precip": precip,
+            "conditions": cond
+        }
+
+    except:
+        return {"high": None, "low": None, "precip": None, "conditions": "N/A"}
+
+
 # -------------------------
 # ROUTES
 # -------------------------
 
 @app.route('/')
 def home():
-    """Driver stats home page"""
-    return render_template('driver_status_home.html')
+
+
+    events = get_schedule()
+    most_recent_event = None
+
+    if events:
+        today = datetime.now()
+        print(f"\n=== DEBUG: Finding closest event to {today.strftime('%B %d, %Y')} ===")
+
+
+        closest_event = None
+        min_diff = None
+
+        for event in events:
+            try:
+                date_str = event.get("date", "")
+                if date_str and date_str != "" and date_str != "Dates not found":
+                    year_match = re.search(r', (\d{4})$', date_str)
+                    if not year_match:
+                        continue
+
+                    year = year_match.group(1)
+                    
+                    first_date_part = date_str.split("&")[0].strip()
+
+                    if not re.search(r'\d{4}', first_date_part):
+                        first_date_part = f"{first_date_part}, {year}"
+
+                    event_date = datetime.strptime(first_date_part, "%B %d, %Y")
+
+                    diff = abs((event_date - today).days)
+                    print(f"  -> Parsed date: {event_date.strftime('%B %d, %Y')} | Diff: {diff} days")
+
+
+                    if min_diff is None or diff < min_diff:
+                        min_diff = diff
+                        closest_event = event
+                        print(f"  -> NEW CLOSEST EVENT!")
+            except ValueError as e:
+                print(f"  -> ERROR parsing date: {e}")
+                continue
+
+        most_recent_event = closest_event
+        if most_recent_event:
+            print(f"\n=== FINAL: Closest event is '{most_recent_event.get('name')}' ===\n")
+
+            
+
+
+    return render_template('driver_status_home.html', 
+                         most_recent_event=most_recent_event)
+
 
 @app.route('/schedule_race')
 def schedule_race():
-    return render_template('schedule_race.html')
+    events = get_schedule()
+    return render_template('schedule_race.html', events=events)
 
 @app.route('/stats')
 def stats():
@@ -44,15 +162,99 @@ def home_logged_in():
     latest_car = cursor.fetchone()
     cursor.close()
 
-    return render_template('driver_status_logged_in_home.html', latest_car=latest_car)
+    events = get_schedule()
+    most_recent_event = None
+
+    if events:
+        today = datetime.now()
+        print(f"\n=== DEBUG: Finding closest event to {today.strftime('%B %d, %Y')} ===")
+
+
+        closest_event = None
+        min_diff = None
+
+        for event in events:
+            try:
+                date_str = event.get("date", "")
+                if date_str and date_str != "" and date_str != "Dates not found":
+                    year_match = re.search(r', (\d{4})$', date_str)
+                    if not year_match:
+                        continue
+
+                    year = year_match.group(1)
+                    
+                    first_date_part = date_str.split("&")[0].strip()
+
+                    if not re.search(r'\d{4}', first_date_part):
+                        first_date_part = f"{first_date_part}, {year}"
+
+                    event_date = datetime.strptime(first_date_part, "%B %d, %Y")
+
+                    diff = abs((event_date - today).days)
+                    print(f"  -> Parsed date: {event_date.strftime('%B %d, %Y')} | Diff: {diff} days")
+
+
+                    if min_diff is None or diff < min_diff:
+                        min_diff = diff
+                        closest_event = event
+                        print(f"  -> NEW CLOSEST EVENT!")
+            except ValueError as e:
+                print(f"  -> ERROR parsing date: {e}")
+                continue
+
+        most_recent_event = closest_event
+        if most_recent_event:
+            print(f"\n=== FINAL: Closest event is '{most_recent_event.get('name')}' ===\n")
+
+            
+
+
+    return render_template('driver_status_logged_in_home.html', 
+                         latest_car=latest_car, 
+                         most_recent_event=most_recent_event)
 
 @app.route('/schedule_race_logged_in')
 def schedule_race_logged_in():
-    return render_template('schedule_race_logged_in.html')
+    events = get_schedule()
+    return render_template('schedule_race_logged_in.html', events=events)
 
 @app.route('/stats_logged_in')
 def stats_logged_in():
-    return render_template('stats_logged_in.html')
+    stats_with_weather = []
+
+    for stat in driver_stats:
+        weather = lookup_weather(stat["event_date"])
+
+        raw = stat["raw_time"]
+        pax = round(raw * stat["pax_index"], 2)
+        final = round(raw + stat["penalties"] * 2, 2)
+
+        stats_with_weather.append({
+            "driver": stat["driver"],
+            "event_date": stat["event_date"],
+            "car_class": stat["car_class"],
+            "raw_time": raw,
+            "pax_time": pax,
+            "penalties": stat["penalties"],
+            "final_time": final,
+            "high_temp": weather["high"],
+            "low_temp": weather["low"],
+            "precip": weather["precip"],
+            "conditions": weather["conditions"]
+        })
+
+
+    # FASTEST CALCULATIONS
+    fastest_raw = min(stats_with_weather, key=lambda x: x["raw_time"])
+    fastest_pax = min(stats_with_weather, key=lambda x: x["pax_time"])
+
+    return render_template(
+        "stats_logged_in.html",
+        data=stats_with_weather,
+        fastest_raw=fastest_raw,
+        fastest_pax=fastest_pax
+    )
+
 
 @app.route('/personal_stats')
 def personal_stats():
@@ -225,4 +427,4 @@ def delete_car(car_id):
 # RUN FLASK
 # -------------------------
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port = 4000)

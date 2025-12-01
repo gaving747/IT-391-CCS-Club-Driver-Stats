@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {text: "Stats", href : "stats.html"},
                 {text: "Login", href : "login.html"},
                 */
-                { text: "Race Schedule", href: "/schedule_race" },
+                { text: "Event Schedule", href: "/schedule_race" },
                 { text: "Stats", href: "/stats" },
                 { text: "Login", href: "/login" },
             ];
