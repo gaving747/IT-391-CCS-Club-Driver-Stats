@@ -78,7 +78,6 @@ def home():
 
     if events:
         today = datetime.now()
-        print(f"\n=== DEBUG: Finding closest event to {today.strftime('%B %d, %Y')} ===")
 
 
         closest_event = None
@@ -108,9 +107,9 @@ def home():
                     if min_diff is None or diff < min_diff:
                         min_diff = diff
                         closest_event = event
-                        print(f"  -> NEW CLOSEST EVENT!")
+                       
             except ValueError as e:
-                print(f"  -> ERROR parsing date: {e}")
+            
                 continue
 
         most_recent_event = closest_event
@@ -536,4 +535,5 @@ def delete_car(car_id):
 # -------------------------
 if __name__ == '__main__':
     app.run(debug=True)
+
 
