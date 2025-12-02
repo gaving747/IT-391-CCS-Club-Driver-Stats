@@ -18,23 +18,6 @@ db = mysql.connector.connect(
     database="ccsccDB"
 )
 
-# ----------------------------
-# DRIVER DATA
-# ----------------------------
-driver_stats = [
-    {"driver": "Ninel Benitez", "event_date": "2024-10-18", "car_class": "STX", "raw_time": 55.23, "pax_index": 0.801, "penalties": 2},
-    {"driver": "Ava Smith", "event_date": "2024-09-22", "car_class": "GS", "raw_time": 54.89, "pax_index": 0.785, "penalties": 0},
-    {"driver": "Thaleina Cruz", "event_date": "2024-08-12", "car_class": "DS", "raw_time": 56.02, "pax_index": 0.796, "penalties": 1},
-    {"driver": "Carlos Martinez", "event_date": "2024-07-18", "car_class": "STR", "raw_time": 53.44, "pax_index": 0.799, "penalties": 0},
-    {"driver": "Brianna Lopez", "event_date": "2024-07-18", "car_class": "HS", "raw_time": 58.91, "pax_index": 0.795, "penalties": 1},
-    {"driver": "Marcus Green", "event_date": "2024-06-14", "car_class": "SS", "raw_time": 51.28, "pax_index": 0.812, "penalties": 0},
-    {"driver": "Ethan Miller", "event_date": "2024-06-14", "car_class": "GS", "raw_time": 52.30, "pax_index": 0.785, "penalties": 0},
-    {"driver": "Olivia Johnson", "event_date": "2024-06-14", "car_class": "ES", "raw_time": 59.72, "pax_index": 0.798, "penalties": 1},
-    {"driver": "Daniel Reyes", "event_date": "2024-05-20", "car_class": "STU", "raw_time": 57.19, "pax_index": 0.801, "penalties": 0},
-    {"driver": "Sofia Alvarez", "event_date": "2024-05-20", "car_class": "HS", "raw_time": 60.44, "pax_index": 0.795, "penalties": 1},
-    {"driver": "Mason Wright", "event_date": "2024-04-10", "car_class": "STS", "raw_time": 55.80, "pax_index": 0.802, "penalties": 0},
-    {"driver": "Isabella Flores", "event_date": "2024-04-10", "car_class": "GS", "raw_time": 58.20, "pax_index": 0.785, "penalties": 2},
-]
 
 
 # ----------------------------
@@ -218,43 +201,82 @@ def schedule_race_logged_in():
     events = get_schedule()
     return render_template('schedule_race_logged_in.html', events=events)
 
+# TEMP
+@app.route('/debug_tables')
+def debug_tables():
+    cursor = db.cursor()
+    cursor.execute("SHOW TABLES")
+    tables = cursor.fetchall()
+    cursor.close()
+    return str(tables)
+
+@app.route('/debug_results_data')
+def debug_results_data():
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM Results LIMIT 5")
+    data = cursor.fetchall()
+    cursor.close()
+    return str(data)
+
 @app.route('/stats_logged_in')
 def stats_logged_in():
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT 
+            driver,
+            event_date,
+            car_class,
+            raw_time,
+            pax_time,
+            penalties,
+            final_time,
+            high_temp,
+            low_temp,
+            precip,
+            conditions
+        FROM Results
+        ORDER BY event_date DESC, driver ASC
+    """)
+
+    results = cursor.fetchall()
+    cursor.close()
+
     stats_with_weather = []
+    for stat in results:
 
-    for stat in driver_stats:
-        weather = lookup_weather(stat["event_date"])
-
-        raw = stat["raw_time"]
-        pax = round(raw * stat["pax_index"], 2)
-        final = round(raw + stat["penalties"] * 2, 2)
+        final_time = stat["final_time"]
+        if final_time == 0:
+            final_time = stat["raw_time"] + (stat["penalties"] * 2)
+        
 
         stats_with_weather.append({
             "driver": stat["driver"],
-            "event_date": stat["event_date"],
+            "event_date": stat["event_date"].strftime("%Y-%m-%d"),  # Convert date to string
             "car_class": stat["car_class"],
-            "raw_time": raw,
-            "pax_time": pax,
+            "raw_time": float(stat["raw_time"]),
+            "pax_time": float(stat["pax_time"]),
             "penalties": stat["penalties"],
-            "final_time": final,
-            "high_temp": weather["high"],
-            "low_temp": weather["low"],
-            "precip": weather["precip"],
-            "conditions": weather["conditions"]
+            "final_time": float(final_time),
+            "high_temp": stat["high_temp"],
+            "low_temp": stat["low_temp"],
+            "precip": stat["precip"],
+            "conditions": stat["conditions"]
         })
 
-
-    # FASTEST CALCULATIONS
-    fastest_raw = min(stats_with_weather, key=lambda x: x["raw_time"])
-    fastest_pax = min(stats_with_weather, key=lambda x: x["pax_time"])
-
+        if stats_with_weather:
+            fastest_raw = min(stats_with_weather, key=lambda x: x["raw_time"])
+            fastest_pax = min(stats_with_weather, key=lambda x: x["pax_time"])
+        else:
+            fastest_raw = fastest_pax = None
     return render_template(
         "stats_logged_in.html",
         data=stats_with_weather,
         fastest_raw=fastest_raw,
         fastest_pax=fastest_pax
     )
-
+    ### what was here before
+  
 
 @app.route('/personal_stats')
 def personal_stats():
