@@ -162,7 +162,7 @@ def stats():
 
         stats_with_weather.append({
             "driver": stat["driver"],
-            "event_date": stat["event_date"].strftime("%Y-%m-%d"),  # Convert date to string
+            "event_date": stat["event_date"].strftime("%Y-%m-%d"), 
             "car_class": stat["car_class"],
             "raw_time": float(stat["raw_time"]),
             "pax_time": float(stat["pax_time"]),
@@ -535,5 +535,6 @@ def delete_car(car_id):
 # -------------------------
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
