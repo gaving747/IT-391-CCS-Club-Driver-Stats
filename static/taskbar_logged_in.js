@@ -18,14 +18,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const taskbar = document.createElement("div");
     taskbar.className = "taskbar";
 
-    links.forEach(link=>{
-    const a = document.createElement("a");
-    a.textContent =link.text;
-    a.href = link.href;
+    // Create hamburger button so small screens can toggle the menu
+    const hamburger = document.createElement("button");
+    hamburger.className = "hamburger";
+    hamburger.setAttribute('aria-label', 'Toggle menu');
+    hamburger.innerHTML = '<span class="bar"></span><span class="bar"></span><span class="bar"></span>';
+    hamburger.addEventListener('click', () => {
+        taskbar.classList.toggle('active');
+    });
 
-    if(link.text === "Profile"){
-        a.className = "right";
-    }
+    taskbar.appendChild(hamburger);
+
+    links.forEach(link=>{
+        const a = document.createElement("a");
+        a.textContent =link.text;
+        a.href = link.href;
+
+        if(link.text === "Profile"){
+            a.className = "right";
+        }
 
         taskbar.appendChild(a);
     });
