@@ -96,10 +96,10 @@
     
     <!-- Controls -->
     <div class="controls">
-        <label>Sort by Event:</label>
+        <label>Sort by:</label>
         <select id="sortSelect">
-            <option value="newest">Newest → Oldest</option>
-            <option value="oldest">Oldest → Newest</option>
+            <option value="A">A → Z</option>
+            <option value="Z">Z → A</option>
         </select>
  
         &nbsp;&nbsp; | &nbsp;&nbsp;
@@ -227,6 +227,29 @@
  
         document.getElementById("eventSelect").addEventListener("change", (e) => {
             loadTable(e.target.value);
+        });
+        document.getElementById("sortSelect").addEventListener("change", (e) => {
+            const sortOrder = e.target.value;
+            const tbody = document.querySelector("#statsTable tbody");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+
+            rows.sort((rowA, rowB) => {
+                if(sortOrder === "name-acs" || sortOrder === "name-des"){
+                    
+                }
+                const driverA = rowA.cells[0].textContent;
+                const driverB = rowB.cells[0].textContent;
+                
+                if (sortOrder === "A") {
+                    return driverA.localeCompare(driverB);
+                } else {
+                    return driverB.localeCompare(driverA);
+                }
+                
+            });
+
+            tbody.innerHTML = "";
+            rows.forEach(row => tbody.appendChild(row));
         });
  
         window.onload = () => {
