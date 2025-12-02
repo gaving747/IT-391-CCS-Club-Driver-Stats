@@ -573,6 +573,16 @@ class MySQLSessionPAXRepo(ISessionPAXRepo):
             cur = c.cursor(dictionary=True)
             cur.execute(q, (session_data_id,))
             return cast(Optional[Dict[str, Any]], cur.fetchone())
+        
+    def get_sessions_pax(self) -> Optional[List[Dict[str, Any]]]:
+        """Returns session with car details joined"""
+        q = """
+            Select * From Session_PAX_Data 
+        """
+        with self._conn.get_conn() as c:
+            cur = c.cursor(dictionary=True)
+            cur.execute(q)
+            return cast(Optional[List[Dict[str, Any]]], cur.fetchall())
 
 
 class MySQLSessionFinalRepo(ISessionFinalRepo):

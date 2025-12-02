@@ -88,7 +88,7 @@ init_car_routes(car_repo)
 init_weather_routes(weather_repo)
 init_session_routes(session_raw_repo, session_pax_repo, session_final_repo)
 init_run_routes(run_repo)
-init_web_routes(account_repo, car_repo, db)
+init_web_routes(account_repo, event_chair_repo,location_repo,event_repo,event_session_repo,weather_repo,car_repo,session_raw_repo,session_pax_repo,session_final_repo,run_repo, db)
 init_scrape_routes(weather_requestor, event_page_scraper, event_chair_repo,location_repo,event_repo,event_session_repo,weather_repo,car_repo,session_raw_repo,session_pax_repo,session_final_repo,run_repo)
 
 # Register blueprints

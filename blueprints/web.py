@@ -3,7 +3,7 @@ from datetime import datetime
 
 web_routes = Blueprint('web_routes', __name__)
 
-def init_web_routes(account_repo, car_repo, db):
+def init_web_routes(account_repo, event_chair_repo,location_repo,event_repo,event_session_repo,weather_repo,car_repo,session_raw_repo,session_pax_repo,session_final_repo,run_repo, db):
     @web_routes.route('/')
     def home():
         """Driver stats home page"""
@@ -31,7 +31,13 @@ def init_web_routes(account_repo, car_repo, db):
 
     @web_routes.route('/personal_stats')
     def personal_stats():
-        return render_template('personal_stats.html')
+        
+        car_events = None 
+
+        
+
+
+        return render_template('personal_stats.html',car_events = car_events)
 
     @web_routes.route('/weather')
     def weather():

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>CCSCC Driver Stats</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='taskbar_logged_in.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='taskbar.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='widgets.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
   
@@ -99,6 +99,13 @@
 
              <li class="event-row" style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #e6e6e6;">
                 <div class="event-date" style="flex:0 0 160px; color:#444; font-weight:600;">October 18 & 19, 2025</div>
+                <div class="event-links" style="display:flex; gap:0.5rem;">
+                    <button class="day-link" onclick="location.href='race_schedule.html#day1'">Saturday</button>
+                    <button class="day-link" onclick="location.href='race_schedule.html#day2'">Sunday</button>
+                </div>
+            </li>
+            <li class="event-row" style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #e6e6e6;">
+                <div class="event-date" style="flex:0 0 160px; color:#444; font-weight:600;">November 8 & 9, 2025</div>
                 <div class="event-links" style="display:flex; gap:0.5rem;">
                     <button class="day-link" onclick="location.href='race_schedule.html#day1'">Saturday</button>
                     <button class="day-link" onclick="location.href='race_schedule.html#day2'">Sunday</button>

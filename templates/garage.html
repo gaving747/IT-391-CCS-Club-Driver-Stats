@@ -6,6 +6,7 @@
 
   <link rel="stylesheet" href="{{ url_for('static', filename='taskbar_logged_in.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='widgets.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
 
   <style>
     body {
@@ -50,6 +51,16 @@
       border-radius: 5px;
       cursor: pointer;
     }
+    button[type="delete"] {
+      margin-top: 15px;
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+
+    }
 
     button[type="submit"]:hover {
       background-color: #45a049;
@@ -75,21 +86,23 @@
 </head>
 
 <body>
-  <h1 style="display: flex; font-size: inherit; justify-content: center;align-items: center; position: relative;">
-        <!--
-        <button onclick="window.location.href='driver_status_logged_in_home.html';" style =" font-size: inherit; background: none; border: none; color: inherit; cursor: pointer; display: flex; align-items: center; ">
-            
-            <image src="logo.png" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 50px; vertical-align: middle; margin-right: 10px; ">
-
-        </button>-->
-            <button onclick="window.location.href='/home_logged_in';" class="h1_button_style">
-            
-            <image src="{{ url_for('static', filename='logo.png') }}" alt="CCSCC Logo">
+  <h1 class = "h1_style">
         
-        </button>
-        <span style = "font-size: x-large; position: left ">CCSCC Stats </span>
+    <!--<button onclick="window.location.href='driver_status_home.html';" class="h1_button_style">
 
-    </h1>
+        <image src="logo.png" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 80px; vertical-align: middle; margin-right: 10px; padding-top: 20px; ">
+
+    </button>-->
+
+     <button onclick="window.location.href='/home_logged_in';" class="h1_button_style">
+        
+        <image src="{{ url_for('static', filename='logo.png') }}" alt="CCSCC Logo" style=" position: absolute; left: 0; height: 80px; vertical-align: middle; margin-right: 10px;padding-top: 20px; ">
+          </image>
+
+    </button>
+    <span style = "font-size: xx-large; position: left ">CCSCC Stats </span>
+
+</h1>
     <div id="taskbar-container"></div>
 <!--
     <div class = "buttons">
@@ -107,8 +120,10 @@
           <th>Year</th>
           <th>Make</th>
           <th>Model</th>
+          <th>Wheelbase</th>
           <th>Tire Description</th>
           <th>Weight</th>
+          <!--<th>Action</th>-->
         </tr>
         {% for car in cars %}
         <tr>
@@ -116,8 +131,14 @@
           <td>{{ car.car_year }}</td>
           <td>{{ car.car_make }}</td>
           <td>{{ car.car_model }}</td>
+          <td>{{ car.wheelbase or 'N/A' }}</td>
           <td>{{car.tire_description}}</td>
           <td>{{ car.weight or 'N/A' }}</td>
+          <!--<td>
+            <form method = "POST" action="/garage/delete_car/{{ car.id }}" onsubmit="return confirm('Are you sure you want to delete this car?');">
+              <button type="delete">Delete</button>
+            </form>
+          </td>-->
         </tr>
         {% endfor %}
       </table>
@@ -155,5 +176,7 @@
       <button type="submit">Add Car</button>
     </form>
   </div>
+  <script src="{{ url_for('static', filename='taskbar_logged_in.js') }}"></script>
+
 </body>
 </html>
