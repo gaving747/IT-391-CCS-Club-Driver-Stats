@@ -131,7 +131,61 @@ def schedule_race():
 
 @app.route('/stats')
 def stats():
-    return render_template('stats.html')
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT 
+            driver,
+            event_date,
+            car_class,
+            raw_time,
+            pax_time,
+            penalties,
+            final_time,
+            high_temp,
+            low_temp,
+            precip,
+            conditions
+        FROM Results
+        ORDER BY event_date DESC, driver ASC
+    """)
+
+    results = cursor.fetchall()
+    cursor.close()
+
+    stats_with_weather = []
+    for stat in results:
+
+        final_time = stat["final_time"]
+        if final_time == 0:
+            final_time = stat["raw_time"] + (stat["penalties"] * 2)
+        
+
+        stats_with_weather.append({
+            "driver": stat["driver"],
+            "event_date": stat["event_date"].strftime("%Y-%m-%d"),  # Convert date to string
+            "car_class": stat["car_class"],
+            "raw_time": float(stat["raw_time"]),
+            "pax_time": float(stat["pax_time"]),
+            "penalties": stat["penalties"],
+            "final_time": float(final_time),
+            "high_temp": stat["high_temp"],
+            "low_temp": stat["low_temp"],
+            "precip": stat["precip"],
+            "conditions": stat["conditions"]
+        })
+
+        if stats_with_weather:
+            fastest_raw = min(stats_with_weather, key=lambda x: x["raw_time"])
+            fastest_pax = min(stats_with_weather, key=lambda x: x["pax_time"])
+        else:
+            fastest_raw = fastest_pax = None
+    return render_template(
+        "stats.html",
+        data=stats_with_weather,
+        fastest_raw=fastest_raw,
+        fastest_pax=fastest_pax
+    )
 
 @app.route('/home_logged_in')
 def home_logged_in():
@@ -201,22 +255,6 @@ def schedule_race_logged_in():
     events = get_schedule()
     return render_template('schedule_race_logged_in.html', events=events)
 
-# TEMP
-@app.route('/debug_tables')
-def debug_tables():
-    cursor = db.cursor()
-    cursor.execute("SHOW TABLES")
-    tables = cursor.fetchall()
-    cursor.close()
-    return str(tables)
-
-@app.route('/debug_results_data')
-def debug_results_data():
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM Results LIMIT 5")
-    data = cursor.fetchall()
-    cursor.close()
-    return str(data)
 
 @app.route('/stats_logged_in')
 def stats_logged_in():
@@ -275,7 +313,7 @@ def stats_logged_in():
         fastest_raw=fastest_raw,
         fastest_pax=fastest_pax
     )
-    ### what was here before
+
   
 
 @app.route('/personal_stats')
