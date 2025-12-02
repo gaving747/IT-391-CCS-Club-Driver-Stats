@@ -177,7 +177,7 @@
                     </thead>
                     <tbody class="session_table_body">
                         <tr class="session_row">
-                            <td class="race_time">{{session_data[0]}}</td>
+                            <td class="race_time">{{session_data[0]}}{% if session_data[0] < session_data[1]%}🎉{%endif%}</td>
                             <td class="race_time">{{session_data[1]}}</td>
                             <td>
                                 <div class="weather_cell">
