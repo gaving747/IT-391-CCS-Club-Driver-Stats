@@ -69,6 +69,42 @@ def lookup_weather(date):
 # ROUTES
 # -------------------------
 
+
+@app.route('/add_data', methods=['GET', 'POST'])
+def add_data():
+    if request.method == 'POST':
+        driver = request.form['driver']
+        event_date_str = request.form['event_date']  # e.g., "2025-10-18"
+        car_class = request.form['car_class']
+        raw_time = request.form['raw_time']
+        pax_time = request.form['pax_time']
+        penalties = request.form['penalties']
+        final_time = request.form['final_time']
+        high_temp = request.form['high_temp']
+        low_temp = request.form['low_temp']
+        precip = request.form['precip']
+        conditions = request.form['conditions']
+ 
+ 
+        # Ensure event_date is in proper date object (optional)
+        event_date = datetime.strptime(event_date_str, "%Y-%m-%d").date()
+ 
+ 
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO Results
+            (driver, event_date, car_class, raw_time, pax_time, penalties, final_time, high_temp, low_temp, precip, conditions)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (driver, event_date, car_class, raw_time, pax_time, penalties, final_time, high_temp, low_temp, precip, conditions))
+        db.commit()
+        cursor.close()
+ 
+ 
+        return redirect(url_for('stats_logged_in'))
+    return render_template('add_data.html')
+
+
+
 @app.route('/')
 def home():
 
@@ -535,6 +571,7 @@ def delete_car(car_id):
 # -------------------------
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
